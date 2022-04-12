@@ -1,35 +1,19 @@
 package owner_qaguru;
 
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import owner_qaguru.config.DriverProvider;
+import owner_qaguru.config.TestBase;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.codeborne.selenide.Selenide.$x;
 
-
-public class WebTest {
-
-    private WebDriver driver;
-
-    @BeforeEach
-    public void startDriver() {
-        driver = new DriverProvider().get();
-    }
+public class WebTest extends TestBase {
 
     @Test
     @Tag("web")
     public void testGitHubTitle() throws Exception {
         Thread.sleep(2000);
-        assertEquals(driver.getTitle(), "Convertio — Конвертер файлов");
+        $x("//div[@class='page-title text-center']/child::h1").shouldHave(Condition.text("Конвертер файлов"));
     }
-
-    @AfterEach
-    public void stopDriver() { driver.quit();
-    }
-
 
 }
