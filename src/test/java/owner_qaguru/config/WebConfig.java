@@ -9,22 +9,25 @@ import org.aeonbits.owner.Config;
 public interface WebConfig extends Config {
 
     @Key("baseurl")
-//    @DefaultValue("https://convertio.co/ru/")
+    @DefaultValue("https://convertio.co/ru/")
     String getBaseUrl();
 
     @Key("browserName")
     String browserName();
 
     @Key("browserVersion")
-    String getBrowserVersion();
+    String browserVersion();
 
     @Key("browserSize")
-    String getBrowserSize();
+    String browserSize();
 
     @Key("isRemote")
     Boolean isRemote();
 
     @Key("remoteUrl")
     String getRemoteUrl();
+
+    @Key("timeout")
+    int timeout();
 
 }
