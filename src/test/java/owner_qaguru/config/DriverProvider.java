@@ -1,46 +1,64 @@
 package owner_qaguru.config;
 
+import com.codeborne.selenide.Configuration;
 import org.aeonbits.owner.ConfigFactory;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.opera.OperaOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
+import static com.codeborne.selenide.Selenide.open;
 
-import java.util.function.Supplier;
+public class DriverProvider {
 
-public class DriverProvider implements Supplier<WebDriver> {
+    private static final WebConfig webConfig = ConfigFactory.create(WebConfig.class, System.getProperties());
 
-private final WebConfig webConfig=ConfigFactory.create(WebConfig.class, System.getProperties());
-
-
-    public DriverProvider() {
-//        this.webConfig =ConfigFactory.create(WebConfig.class, System.getProperties());
-        System.out.println("979"+webConfig.getBaseUrl());
+    public static void openPage() {
+        open(webConfig.getBaseUrl());
     }
 
-    @Override
-    public WebDriver get() {
-        WebDriverManager.chromedriver().setup();
-        WebDriver driver = new ChromeDriver();
-        System.out.println("999"+webConfig.getBaseUrl());
-        driver.get(webConfig.getBaseUrl());
-        return driver;
-    }
+    public static void configure() {
 
-    public boolean isRemoteWebDriver() {
-        return !webConfig.getRemoteUrl().equals("");
-    }
+        Configuration.browser = webConfig.browserName();
+        Configuration.browserVersion = webConfig.browserVersion();
+        Configuration.browserSize = webConfig.browserSize();
+        Configuration.timeout = webConfig.timeout();
 
-    public String browserName() {
-        return webConfig.browserName();
-    }
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        ChromeOptions chromeOptions = new ChromeOptions();
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        OperaOptions operaOptions = new OperaOptions();
 
-    public String browserVersion() {
-        return webConfig.getBrowserVersion();
-    }
+        switch (Configuration.browser) {
+            case "chrome":
+                chromeOptions.addArguments("--no-sandbox");
+                chromeOptions.addArguments("--disable-infobars");
+                chromeOptions.addArguments("--disable-popup-blocking");
+                chromeOptions.addArguments("--disable-notifications");
+                chromeOptions.addArguments("--lang=en-en");
+                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+                break;
+            case "firefox":
+                firefoxOptions.addArguments("--fast-start");
+                firefoxOptions.addArguments("--enable-logging");
+                firefoxOptions.addArguments("--ignore-certificate-errors");
+                firefoxOptions.addArguments("--disable-gpu");
+                capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, firefoxOptions);
+                break;
+            case "opera":
+                operaOptions.addArguments("--disable-gpu");
+                capabilities.setCapability(OperaOptions.CAPABILITY, operaOptions);
+                break;
+        }
 
-    public String browserSize() {
-        return webConfig.getBrowserSize();
+        if (webConfig.isRemote()) {
+            capabilities.setCapability("enableVNC", true);
+            capabilities.setCapability("enableVideo", true);
+            Configuration.remote = webConfig.getRemoteUrl();
+        }
+
+        Configuration.browserCapabilities = capabilities;
+
     }
 
 }
