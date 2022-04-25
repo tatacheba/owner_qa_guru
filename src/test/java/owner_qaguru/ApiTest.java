@@ -4,10 +4,11 @@ import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import owner_qaguru.config.ApiConfig;
+import owner_qaguru.config.TestBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApiTest {
+public class ApiTest extends TestBase {
 
     @Test
     @Tag("api")

@@ -3,8 +3,8 @@ package owner_qaguru.config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "file:web.properties",
-        "classpath:web.properties"
+        "file:${properties}.properties",
+        "classpath:${properties}.properties"
 })
 public interface WebConfig extends Config {
 
